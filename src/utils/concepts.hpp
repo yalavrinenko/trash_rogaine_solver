@@ -7,6 +7,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <filesystem>
 
 template <typename T>
 concept ImageLoader = requires(T loader) {
@@ -24,6 +25,11 @@ concept MapHolder = requires (T holder, T* pholder) {
 template <typename T>
 concept Filter = requires (T filter){
   {filter.apply(cv::Mat{})} -> std::convertible_to<cv::Mat>;
+};
+
+template <typename T>
+concept CheckPointDetector = requires (T detector) {
+  { detector.extract_check_points(cv::Mat{})};
 };
 
 #endif //TRASH_ROGAINE_SOLVER_CONCEPTS_HPP

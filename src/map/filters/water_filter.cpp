@@ -13,8 +13,9 @@ namespace {
       return {190, 0, 0};
     }
 
-    static cv::Vec3i hsv_threshold() {
-      return {0, 0, 0};
+    static std::pair<cv::Vec3i, cv::Vec3i> hsv_limits() {
+      return {{90, 20, 200}, {100, 70, 255}};
+      //return {{200, 50, 50}, {255, 100, 100}};
     }
 
     static unsigned grayscale_threshold() {
@@ -28,8 +29,11 @@ namespace {
 }
 
 cv::Mat trs::water_filter::apply(const cv::Mat &src) {
+  cv::Mat hsv;
+  cv::cvtColor(src, hsv, cv::COLOR_BGR2HSV);
+
   cv::Mat mask;
-  cv::inRange(src, water_option::color_threshold(), cv::Vec3i {255, 255, 255}, mask);
+  cv::inRange(hsv, water_option::hsv_limits().first, water_option::hsv_limits().second, mask);
 
   auto target_map = target_filter::apply(src);
 
@@ -38,22 +42,20 @@ cv::Mat trs::water_filter::apply(const cv::Mat &src) {
   return smooth(mask);
 }
 
-cv::Mat &trs::water_filter::smooth(cv::Mat &in) {
-  auto neigh_count = [&in](auto x, auto y){
-    auto count = 0u;
-    for (auto i : {-1, 0, 1})
-      for (auto j : {-1, 0, 1}){
-        if (!(i == 0 && j == 0))
-          if (in.at<int>(x + i, y + j) != 0)
-            ++count;
-      }
-    return count;
-  };
-  for (std::weakly_incrementable auto i : std::views::iota(1, in.rows))
-    for (std::weakly_incrementable auto j : std::views::iota(1, in.cols)){
-      if (in.at<int>(i, j) == 0){
-        in.at<int>(i, j) = (neigh_count(i, j) >= 5) ? 255 : 0;
-      }
-    }
-  return in;
+cv::Mat trs::water_filter::smooth(const cv::Mat &in) {
+  cv::Mat_<double> kernel (5, 5);
+  kernel << 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1;
+  kernel /= 25.0;
+
+  cv::Mat smoothed;
+  cv::filter2D(in, smoothed, 0, kernel);
+  cv::inRange(smoothed, 10, 255, smoothed);
+
+//  cv::filter2D(smoothed, smoothed, 0, kernel);
+//  cv::inRange(smoothed, 10, 255, smoothed);
+  return smoothed;
 }

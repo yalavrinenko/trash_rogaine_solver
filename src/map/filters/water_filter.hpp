@@ -15,7 +15,7 @@ namespace trs {
     static cv::Mat apply(cv::Mat const& src);
 
   private:
-    static cv::Mat& smooth(cv::Mat &in);
+    static cv::Mat smooth(const cv::Mat &in);
   };
 }
 
