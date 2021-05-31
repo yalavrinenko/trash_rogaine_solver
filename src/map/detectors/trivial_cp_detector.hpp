@@ -20,7 +20,7 @@ namespace trs {
     ~general_detector();
   private:
     std::vector<check_point> get_check_point(cv::Mat const& frame, std::vector<cv::Vec3f> const& circles);
-    cv::Mat smooth(cv::Mat const &in, int iteration);
+    static cv::Mat smooth(cv::Mat const &in, int iteration);
     std::string digit_recognition(cv::Mat const& frame);
 
     struct dnn_core;

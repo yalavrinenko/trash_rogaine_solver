@@ -3,7 +3,7 @@ project(trash_rogaine_solver)
 
 option(USE_SANITIZER "Builde with asan support" OFF)
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 4.5.2 REQUIRED)
 find_package(Threads REQUIRED)
 find_package(Boost REQUIRED log)
 
@@ -12,7 +12,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
 
 set(main_src ../src/main.cpp
         ../src/map/map.cpp ../src/map/map.hpp
-        ../src/map/ocv_image_loader.cpp ../src/map/ocv_image_loader.hpp ../src/utils/exceptions.hpp ../src/utils/concepts.hpp ../src/map/filters/water_filter.cpp ../src/map/filters/water_filter.hpp ../src/map/filters/target_filter.cpp ../src/map/filters/target_filter.cpp ../src/map/filters/target_filter.hpp ../src/map/detectors/trivial_cp_detector.cpp ../src/map/detectors/trivial_cp_detector.hpp)
+        ../src/map/ocv_image_loader.cpp ../src/map/ocv_image_loader.hpp
+        ../src/utils/exceptions.hpp ../src/utils/concepts.hpp
+        ../src/map/filters/water_filter.cpp ../src/map/filters/water_filter.hpp
+        ../src/map/filters/target_filter.cpp ../src/map/filters/target_filter.cpp
+        ../src/map/filters/target_filter.hpp ../src/map/detectors/trivial_cp_detector.cpp
+        ../src/map/detectors/trivial_cp_detector.hpp)
 
 set(libs ${OpenCV_LIBS} Threads::Threads Boost::log)
 

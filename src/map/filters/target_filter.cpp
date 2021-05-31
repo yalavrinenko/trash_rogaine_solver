@@ -13,7 +13,7 @@ namespace {
     };
 
     static std::pair<cv::Scalar , cv::Scalar> hsv_limits_hi() {
-      return {cv::Scalar {150.0, 200, 200}, {180.0, 255, 255}};
+      return {cv::Scalar {150.0, 190, 190}, {180.0, 255, 255}};
     }
 
     static std::pair<cv::Scalar , cv::Scalar> hsv_limits_lo() {
