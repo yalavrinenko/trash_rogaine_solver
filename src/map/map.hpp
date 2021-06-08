@@ -50,22 +50,19 @@ namespace trs {
 
     cv::Mat const& extract_roads(road_extractor extractor={}) {
       roads_ = std::make_unique<holder>(extractor.apply(handle_->image()));
-      return roads_map();
+      return roads_->image();
+    }
+
+    [[nodiscard]] cv::Mat const& extract_roads() const {
+      return roads_->image();
     }
 
     auto const& checks() const { return check_points_; }
 
   private:
-    decltype(auto) roads_map() {
-      if (!roads_)
-        extract_roads();
-
-      return roads_->image();
-    }
-
     std::unique_ptr<holder> handle_;
     std::unique_ptr<holder> roads_;
-    std::vector<check_point> check_points_;
+    std::unordered_map<size_t, check_point> check_points_;
   };
 }
 

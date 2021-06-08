@@ -17,7 +17,7 @@ set(main_src ../src/main.cpp
         ../src/map/filters/water_filter.cpp ../src/map/filters/water_filter.hpp
         ../src/map/filters/target_filter.cpp ../src/map/filters/target_filter.cpp
         ../src/map/filters/target_filter.hpp ../src/map/detectors/trivial_cp_detector.cpp
-        ../src/map/detectors/trivial_cp_detector.hpp)
+        ../src/map/detectors/trivial_cp_detector.hpp ../src/pathfinders/Astar_searcher.cpp ../src/pathfinders/Astar_searcher.hpp ../src/map/solver.cpp ../src/map/solver.hpp ../src/pathfinders/boost_graph/boost_asearch.hpp)
 
 set(libs ${OpenCV_LIBS} Threads::Threads Boost::log)
 

@@ -105,7 +105,7 @@ trs::general_detector::~general_detector() = default;
 
 
 
-std::vector<trs::check_point> trs::general_detector::extract_point(const cv::Mat &filtered) {
+std::unordered_map<size_t, trs::check_point> trs::general_detector::extract_point(const cv::Mat &filtered) {
   std::vector<cv::Vec3f> circles;
 
   auto const minDist = 50;
@@ -159,9 +159,9 @@ std::string trs::general_detector::digit_recognition(const cv::Mat &frame) {
   return core_->detect(frame);
 }
 
-std::vector<trs::check_point>
+std::unordered_map<size_t, trs::check_point>
 trs::general_detector::get_check_point(const cv::Mat &frame, const std::vector<cv::Vec3f> &circles) {
-  std::vector<check_point> cp;
+  std::unordered_map<size_t, check_point> cp;
 
   auto frame_size = 45;
 
@@ -176,7 +176,7 @@ trs::general_detector::get_check_point(const cv::Mat &frame, const std::vector<c
     auto subframe = frame(cv::Rect(left_up, right_bot));
     auto id_str = digit_recognition(subframe);
     if (id_str != "")
-      cp.emplace_back(check_point{
+      cp.emplace(std::stoull(id_str), check_point{
         .position = {static_cast<size_t>(c[0]), static_cast<size_t >(c[1])},
         .uid = std::stoull(id_str)
       });

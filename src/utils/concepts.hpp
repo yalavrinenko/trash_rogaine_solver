@@ -32,4 +32,9 @@ concept CheckPointDetector = requires (T detector) {
   { detector.extract_check_points(cv::Mat{})};
 };
 
+template <typename T>
+concept RogaineMap = requires (T map){
+  {map.extract_roads()} -> std::convertible_to<cv::Mat>;
+};
+
 #endif //TRASH_ROGAINE_SOLVER_CONCEPTS_HPP

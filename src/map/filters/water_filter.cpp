@@ -35,9 +35,9 @@ cv::Mat trs::water_filter::apply(const cv::Mat &src) {
   cv::Mat mask;
   cv::inRange(hsv, water_option::hsv_limits().first, water_option::hsv_limits().second, mask);
 
-  auto target_map = target_filter::apply(src);
-
-  cv::bitwise_or(mask, target_map, mask);
+//  auto target_map = target_filter::apply(src);
+//
+//  cv::bitwise_or(mask, target_map, mask);
 
   return smooth(mask);
 }
