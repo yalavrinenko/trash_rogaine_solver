@@ -13,11 +13,11 @@ namespace {
     };
 
     static std::pair<cv::Scalar , cv::Scalar> hsv_limits_hi() {
-      return {cv::Scalar {150.0, 190, 190}, {180.0, 255, 255}};
+      return {cv::Scalar {150.0, 180, 180}, {180.0, 255, 255}};
     }
 
     static std::pair<cv::Scalar , cv::Scalar> hsv_limits_lo() {
-      return {cv::Scalar {0, 200, 200}, {10, 255, 255}};
+      return {cv::Scalar {0, 180, 180}, {20, 255, 255}};
     }
   };
 }
@@ -33,5 +33,6 @@ cv::Mat trs::target_filter::apply(const cv::Mat &src) {
   cv::inRange(hsv, target_option::hsv_limits_lo().first, target_option::hsv_limits_lo().second, target_map_lo);
 
   cv::bitwise_or(target_map_hi, target_map_lo, target_map_hi);
+
   return target_map_hi;
 }

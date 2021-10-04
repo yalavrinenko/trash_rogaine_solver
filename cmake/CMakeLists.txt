@@ -8,16 +8,16 @@ find_package(Threads REQUIRED)
 find_package(Boost REQUIRED log)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -fconcepts-diagnostics-depth=2")
 
 set(main_src ../src/main.cpp
-        ../src/map/map.cpp ../src/map/map.hpp
+        ../src/map/rogaine_map.cpp ../src/map/rogaine_map.hpp
         ../src/map/ocv_image_loader.cpp ../src/map/ocv_image_loader.hpp
         ../src/utils/exceptions.hpp ../src/utils/concepts.hpp
         ../src/map/filters/water_filter.cpp ../src/map/filters/water_filter.hpp
         ../src/map/filters/target_filter.cpp ../src/map/filters/target_filter.cpp
         ../src/map/filters/target_filter.hpp ../src/map/detectors/trivial_cp_detector.cpp
-        ../src/map/detectors/trivial_cp_detector.hpp ../src/pathfinders/Astar_searcher.cpp ../src/pathfinders/Astar_searcher.hpp ../src/map/solver.cpp ../src/map/solver.hpp ../src/pathfinders/boost_graph/boost_asearch.hpp)
+        ../src/map/detectors/trivial_cp_detector.hpp ../src/pathfinders/Astar_searcher.cpp ../src/pathfinders/Astar_searcher.hpp ../src/solver.cpp ../src/solver.hpp ../src/pathfinders/boost_graph/boost_asearch.hpp ../src/pathfinders/graph_traits.hpp ../src/engines/greedy_engine.hpp ../src/engines/greedy_engine.cpp ../src/pathfinders/boost_graph/full_linked_graph.hpp ../src/pathfinders/boost_graph/boost_grid_graph.hpp ../src/pathfinders/legacy/asearch.hpp)
 
 set(libs ${OpenCV_LIBS} Threads::Threads Boost::log)
 
@@ -34,3 +34,5 @@ if (USE_SANITIZER)
 else()
     target_link_libraries(${main_target_name} ${libs})
 endif()
+
+add_subdirectory(../tests ${CMAKE_CURRENT_BINARY_DIR}/tests)

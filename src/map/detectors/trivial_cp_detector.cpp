@@ -105,7 +105,7 @@ trs::general_detector::~general_detector() = default;
 
 
 
-std::unordered_map<size_t, trs::check_point> trs::general_detector::extract_point(const cv::Mat &filtered) {
+std::unordered_map<size_t, trs::check_point> trs::general_detector::extract_point(const cv::Mat &filtered, cv::Mat const& raw) {
   std::vector<cv::Vec3f> circles;
 
   auto const minDist = 50;
@@ -131,12 +131,12 @@ std::unordered_map<size_t, trs::check_point> trs::general_detector::extract_poin
     float radius;
 
     cv::minEnclosingCircle(contour, center, radius);
-    if (9 <= radius && radius <= 25) {
+    if (9 <= radius && radius <= 20) {
       try_add(center, radius);
     }
   }
 
-  return get_check_point(filtered, circles);
+  return get_check_point(raw, circles);
 }
 
 cv::Mat trs::general_detector::smooth(cv::Mat const &in, int iteration) {
@@ -160,10 +160,13 @@ std::string trs::general_detector::digit_recognition(const cv::Mat &frame) {
 }
 
 std::unordered_map<size_t, trs::check_point>
-trs::general_detector::get_check_point(const cv::Mat &frame, const std::vector<cv::Vec3f> &circles) {
+trs::general_detector::get_check_point(const cv::Mat &raw_frame, const std::vector<cv::Vec3f> &circles) {
   std::unordered_map<size_t, check_point> cp;
 
-  auto frame_size = 45;
+  cv::Mat frame;
+  cv::cvtColor(raw_frame, frame, cv::COLOR_BGR2GRAY);
+
+  auto frame_size = 60;
 
   for (auto &c : circles){
     cv::circle(frame, cv::Point{static_cast<int>(c[0]), static_cast<int>(c[1])}, static_cast<int>(c[2]), cv::Scalar(0),
@@ -175,7 +178,7 @@ trs::general_detector::get_check_point(const cv::Mat &frame, const std::vector<c
 
     auto subframe = frame(cv::Rect(left_up, right_bot));
     auto id_str = digit_recognition(subframe);
-    if (id_str != "")
+    if (!id_str.empty())
       cp.emplace(std::stoull(id_str), check_point{
         .position = {static_cast<size_t>(c[0]), static_cast<size_t >(c[1])},
         .uid = std::stoull(id_str)

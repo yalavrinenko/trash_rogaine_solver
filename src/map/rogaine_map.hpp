@@ -2,8 +2,8 @@
 // Created by yalavrinenko on 22.05.2021.
 //
 
-#ifndef TRASH_ROGAINE_SOLVER_MAP_HPP
-#define TRASH_ROGAINE_SOLVER_MAP_HPP
+#ifndef TRASH_ROGAINE_SOLVER_ROGAINE_MAP_HPP
+#define TRASH_ROGAINE_SOLVER_ROGAINE_MAP_HPP
 
 #include "ocv_image_loader.hpp"
 #include "filters/water_filter.hpp"
@@ -34,14 +34,14 @@ namespace trs {
       Filter road_selection_strategy = water_filter,
       CheckPointDetector check_point_detection_strategy = trivial_cp_detector<target_filter>
           >
-  class map {
+  class rogaine_map {
   public:
     using holder = holding_strategy;
     using loader = load_map_strategy;
     using road_extractor = road_selection_strategy;
     using cp_detector = check_point_detection_strategy;
 
-    explicit map(std::filesystem::path const& img, loader load_strategy={}, cp_detector detector = {}){
+    explicit rogaine_map(std::filesystem::path const& img, loader load_strategy={}, cp_detector detector = {}){
       handle_ = std::make_unique<holder>(load_strategy.load(img));
       check_points_ = detector.extract_check_points(handle_->image());
     }
@@ -59,6 +59,11 @@ namespace trs {
 
     auto const& checks() const { return check_points_; }
 
+    template<typename filter_function>
+    void filter_terrain(filter_function filter){
+      filter(roads_->image());
+    }
+
   private:
     std::unique_ptr<holder> handle_;
     std::unique_ptr<holder> roads_;
@@ -67,4 +72,4 @@ namespace trs {
 }
 
 
-#endif //TRASH_ROGAINE_SOLVER_MAP_HPP
+#endif//TRASH_ROGAINE_SOLVER_ROGAINE_MAP_HPP

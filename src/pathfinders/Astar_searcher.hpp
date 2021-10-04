@@ -7,33 +7,31 @@
 
 #include "boost_graph/boost_asearch.hpp"
 #include <utils/concepts.hpp>
+#include "graph_traits.hpp"
 #include <vector>
 
 namespace trs {
-
-  using path = std::pair<size_t, std::vector<std::pair<int, int>>>;
-  using check_point_vertex = std::pair<size_t, size_t>;
-
   template<typename T>
   concept UndirectGraph = requires(T const &h) {
     {T(cv::Mat{})};
     {h.graph()};
-    {h.visitor(typename T::vertex_descriptor{})};
+    {h.visitor(std::declval<typename rogain_graph_traits<T>::vertex_t>())};
     {h.vertex2d(size_t{}, size_t{})};
   };
 
-  template<typename T, typename graph, typename vertex, typename visitor>
+  template<typename T, typename graph>
   concept GraphSearchStrategy = requires(T s) {
-    { s.find_path(std::declval<graph>(), vertex{}, vertex{}, std::declval<visitor>()) } -> std::convertible_to<path>;
+    { s.find_path(std::declval<typename rogain_graph_traits<graph>::graph_t>(),
+        std::declval<typename rogain_graph_traits<graph>::vertex_t>(),
+        std::declval<typename rogain_graph_traits<graph>::vertex_t>(),
+        std::declval<typename rogain_graph_traits<graph>::visitor_t>()) } -> std::convertible_to<path>;
   };
 
-  template<UndirectGraph graph_handler = trs::boost_grid_graph,
-           GraphSearchStrategy<typename graph_handler::graph_type, typename graph_handler::vertex_descriptor,
-                               typename graph_handler::visitor_type>
-               search_strategy = trs::boost_astar_search<>>
+  template<RogaineMap map_t, UndirectGraph graph_handler = trs::boost_grid_graph,
+           GraphSearchStrategy<graph_handler> search_strategy = trs::boost_astar_search<>>
   class Astar_searcher {
   public:
-    explicit Astar_searcher(RogaineMap auto const & map): handler_(map.extract_roads()) {}
+    explicit Astar_searcher(map_t const & map): handler_(map.extract_roads()) {}
 
     path find_path(check_point_vertex const &from, check_point_vertex const &to, search_strategy searcher = {}) {
       auto s_vertex = handler_.vertex2d(from.second, from.first);

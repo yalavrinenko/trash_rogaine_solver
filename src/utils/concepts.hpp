@@ -9,6 +9,23 @@
 #include <iostream>
 #include <filesystem>
 
+namespace trs{
+  using path = std::pair<double, std::vector<std::pair<int, int>>>;
+  using check_point_vertex = std::pair<size_t, size_t>;
+
+  struct check_point{
+    std::pair<size_t, size_t> position;
+    size_t uid;
+  };
+
+  struct solution {
+    double distance;
+    size_t score;
+    std::vector<size_t> trace;
+    std::vector<path> track;
+  };
+}
+
 template <typename T>
 concept ImageLoader = requires(T loader) {
   {loader.load(std::filesystem::path{}) } -> std::convertible_to<cv::Mat>;
@@ -35,6 +52,7 @@ concept CheckPointDetector = requires (T detector) {
 template <typename T>
 concept RogaineMap = requires (T map){
   {map.extract_roads()} -> std::convertible_to<cv::Mat>;
+  {map.checks()} -> std::convertible_to<std::unordered_map<size_t, trs::check_point>>;
 };
 
 #endif //TRASH_ROGAINE_SOLVER_CONCEPTS_HPP

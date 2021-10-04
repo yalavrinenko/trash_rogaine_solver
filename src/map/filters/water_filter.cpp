@@ -14,7 +14,7 @@ namespace {
     }
 
     static std::pair<cv::Vec3i, cv::Vec3i> hsv_limits() {
-      return {{90, 20, 200}, {100, 70, 255}};
+      return {{90, 105, 230}, {100, 115, 240}};
       //return {{200, 50, 50}, {255, 100, 100}};
     }
 
